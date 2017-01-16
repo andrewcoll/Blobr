@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Text;
-using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
 
 namespace SimpleBlobStorage
 {
-    public class SimpleBlobStorage
+    public class StorageWrapper
     {
         private CloudBlobContainer container;
 
-        public SimpleBlobStorage(CloudBlobContainer blobContainer)
+        public StorageWrapper(CloudBlobContainer blobContainer)
         {
             if(blobContainer == null)
             {
@@ -38,6 +37,7 @@ namespace SimpleBlobStorage
 
             return await LoadPageAsync<T>(pageName);
         }
+
 
         /// <summary>
         /// Loads a page
