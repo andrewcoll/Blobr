@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FakeItEasy;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Xunit;
@@ -17,7 +18,9 @@ namespace Tests
         [Fact]
         public void CanInitialiseStorageWrapper()
         {
-            var cloudContainer = A.Fake<CloudBlobContainer>();
+            var args = new List<object>() { new Uri("http://localhost") };
+            var cloudContainer = A.Fake<CloudBlobContainer>(
+            options => options.WithArgumentsForConstructor(args));
             var wrapper = new StorageWrapper(cloudContainer);
 
             Assert.NotNull(wrapper);
