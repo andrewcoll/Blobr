@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using FakeItEasy;
-using Microsoft.WindowsAzure.Storage.Blob;
 using Xunit;
 using SimpleBlobStorage;
 
-namespace Tests
+namespace SimpleBlobStorage.Tests
 {
     public class StorageWrapperTests
-    {
+    {   
         [Fact]
         public void NullContainerThrowsException() 
         {
@@ -18,12 +17,18 @@ namespace Tests
         [Fact]
         public void CanInitialiseStorageWrapper()
         {
-            var args = new List<object>() { new Uri("http://localhost") };
-            var cloudContainer = A.Fake<CloudBlobContainer>(
-            options => options.WithArgumentsForConstructor(args));
-            var wrapper = new StorageWrapper(cloudContainer);
-
+            var wrapper = new StorageWrapper(new TestAzureStorageWrapper());
             Assert.NotNull(wrapper);
+        }
+
+        [Fact]
+        public void CanCreatePage()
+        {
+            var items = new List<string>() { "a", "b", "c" };
+            var wrapper = new StorageWrapper(new TestAzureStorageWrapper());
+
+            var page = wrapper.CreatePage<string>(items);
+            Assert.Equal(3, page.Items.Count);
         }
     }
 }

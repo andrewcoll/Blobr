@@ -8,8 +8,7 @@
     "xunit": "2.1.0",
     "dotnet-test-xunit": "1.0.0-rc2-192208-24",
     "SimpleBlobStorage": "1.0.0",
-    "FakeItEasy": "3.0.0-beta002-build000066",
-    "WindowsAzure.Storage": "7.2.1"
+    "FakeItEasy": "3.0.0-beta002-build000066"
   },
   "testRunner": "xunit",
   "frameworks": {

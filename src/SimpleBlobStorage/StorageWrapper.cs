@@ -10,16 +10,33 @@ namespace SimpleBlobStorage
 {
     public class StorageWrapper
     {
-        private CloudBlobContainer container;
+        private readonly IAzureStorageWrapper storageWrapper;
 
-        public StorageWrapper(CloudBlobContainer blobContainer)
+        public StorageWrapper(IAzureStorageWrapper storageWrapper)
         {
-            if(blobContainer == null)
+            if(storageWrapper == null)
             {
-                throw new ArgumentNullException(nameof(blobContainer));
+                throw new ArgumentNullException(nameof(storageWrapper));
             }    
 
-            this.container = blobContainer;
+            this.storageWrapper = storageWrapper;
+        }
+
+
+        /// <summary>
+        /// Create a new page
+        /// </summary>
+        /// <param name="items">Items for the page</param>
+        /// <returns>A page object</returns>
+        public Page<T> CreatePage<T>(ICollection<T> items)
+        {
+            if(items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
+
+            var page = Page<T>.FromJson<T>(items);
+            return page;
         }
 
 
@@ -46,15 +63,7 @@ namespace SimpleBlobStorage
         /// <returns></returns>
         private async Task<Page<T>> LoadPageAsync<T>(string pageName)
         {
-            var blob = this.container.GetBlobReference(pageName);
-            var data = string.Empty;
-
-            using(var memStream = new MemoryStream())
-            {
-                await blob.DownloadToStreamAsync(memStream);
-                data = Encoding.UTF8.GetString(memStream.ToArray());
-            }
-
+            var data = await Task.Run(() => this.storageWrapper.LoadBlobDataAsync(pageName));
             var deserializedData = JsonConvert.DeserializeObject<List<T>>(data);
 
             return Page<T>.FromJson<T>(deserializedData);
@@ -79,10 +88,8 @@ namespace SimpleBlobStorage
                 throw new ArgumentNullException(nameof(page));
             }
 
-            var blob = this.container.GetBlockBlobReference(pageName);
             var serializedData = JsonConvert.SerializeObject(page);
-
-            await blob.UploadTextAsync(serializedData);
+            await Task.Run(() => this.storageWrapper.SaveBlobDataAsync(pageName, serializedData));
         }
     }
 }
