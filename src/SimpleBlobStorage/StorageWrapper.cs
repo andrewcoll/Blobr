@@ -88,7 +88,7 @@ namespace SimpleBlobStorage
                 throw new ArgumentNullException(nameof(page));
             }
 
-            var serializedData = JsonConvert.SerializeObject(page);
+            var serializedData = JsonConvert.SerializeObject(page.Items);
             await Task.Run(() => this.storageWrapper.SaveBlobDataAsync(pageName, serializedData));
         }
     }

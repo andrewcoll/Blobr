@@ -30,5 +30,29 @@ namespace SimpleBlobStorage.Tests
             var page = wrapper.CreatePage<string>(items);
             Assert.Equal(3, page.Items.Count);
         }
+
+        [Fact]
+        public async void CanSavePage()
+        {
+            var storage = new TestAzureStorageWrapper();
+            var items = new List<string>() { "a", "b", "c" };
+            var wrapper = new StorageWrapper(storage);
+            var page = wrapper.CreatePage<string>(items);
+            await wrapper.SavePageAsync("test", page);
+            Assert.Equal(1, storage.blobData.Count);
+        }
+
+        [Fact]
+        public async void CanGetExistingPage()
+        {
+            var storage = new TestAzureStorageWrapper();
+            var items = new List<string>() { "a", "b", "c" };
+            var wrapper = new StorageWrapper(storage);
+            var page = wrapper.CreatePage<string>(items);
+            await wrapper.SavePageAsync("test", page);
+            
+            var retrieved = await wrapper.GetPageAsync<string>("test");
+            Assert.Equal(3, retrieved.Items.Count);
+        }
     }
 }

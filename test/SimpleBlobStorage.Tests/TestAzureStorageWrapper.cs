@@ -6,7 +6,7 @@ namespace SimpleBlobStorage.Tests
 {
     public class TestAzureStorageWrapper : IAzureStorageWrapper
     {
-        private readonly Dictionary<string, string> blobData;
+        internal readonly Dictionary<string, string> blobData;
 
         public TestAzureStorageWrapper()
         {
