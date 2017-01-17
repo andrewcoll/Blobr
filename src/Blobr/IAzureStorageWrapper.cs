@@ -1,7 +1,10 @@
 using System.Threading.Tasks;
 
-public interface IAzureStorageWrapper
+namespace Blobr
 {
-    Task<string> LoadBlobDataAsync(string blobName);
-    Task SaveBlobDataAsync(string blobName, string data);
+    public interface IAzureStorageWrapper
+    {
+        Task<string> LoadBlobDataAsync(string blobName);
+        Task SaveBlobDataAsync(string blobName, string data);
+    }
 }

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SimpleBlobStorage
+namespace Blobr
 {
     public class Page<T>
     {

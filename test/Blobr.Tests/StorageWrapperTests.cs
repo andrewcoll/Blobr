@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FakeItEasy;
 using Xunit;
-using SimpleBlobStorage;
+using Blobr;
 
-namespace SimpleBlobStorage.Tests
+namespace Blobr.Tests
 {
     public class StorageWrapperTests
     {   

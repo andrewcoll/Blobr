@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Blobr;
 
-namespace SimpleBlobStorage.Tests
+namespace Blobr.Tests
 {
     public class TestAzureStorageWrapper : IAzureStorageWrapper
     {
@@ -18,9 +19,10 @@ namespace SimpleBlobStorage.Tests
             return blobData[blobName];
         }
 
-        public void SaveBlobDataAsync(string blobName, string data)
+        public Task SaveBlobDataAsync(string blobName, string data)
         {
             blobData.Add(blobName, data);
+            return Task.FromResult(0);
         }
     }
 }
