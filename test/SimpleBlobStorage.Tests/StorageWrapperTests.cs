@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FakeItEasy;
 using Xunit;
 using SimpleBlobStorage;
@@ -28,7 +29,7 @@ namespace SimpleBlobStorage.Tests
             var wrapper = new StorageWrapper(new TestAzureStorageWrapper());
 
             var page = wrapper.CreatePage<string>(items);
-            Assert.Equal(3, page.Items.Count);
+            Assert.Equal(3, page.Items.ToList().Count);
         }
 
         [Fact]
@@ -52,7 +53,7 @@ namespace SimpleBlobStorage.Tests
             await wrapper.SavePageAsync("test", page);
             
             var retrieved = await wrapper.GetPageAsync<string>("test");
-            Assert.Equal(3, retrieved.Items.Count);
+            Assert.Equal(3, retrieved.Items.ToList().Count);
         }
     }
 }
