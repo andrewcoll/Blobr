@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "debugType": "portable"
+  },
+  "authors": [
+    "Andrew Collins"
+  ],
+  "packOptions": {
+    "owners": [
+      "Andrew Collins"
+    ],
+    "licenseUrl": "https://github.com/andrewcoll/Blobr/blob/master/LICENSE",
+    "summary": "A simple wrapper for storing data in Azure Blob Storage",
+    "tags": [
+      "blobr", "azure", "blob"
+    ]
+  },
+  "title": "Blobr",
+  "description": "A simple wrapper for storing data in Azure Blob Storage",
+  "dependencies": {},
+  "frameworks": {
+    "netstandard1.6": {
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "WindowsAzure.Storage": "7.2.1",
+        "Newtonsoft.Json": "9.0.1",
+        "System.Linq.Queryable": "4.3.0"
+      },
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ]
+    }
+  },
+  "scripts": {
+    "postcompile": [
+      "dotnet pack --no-build --configuration %compile:Configuration%"
+    ]
+  }
+}
