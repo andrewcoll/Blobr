@@ -53,11 +53,11 @@ namespace SimpleBlobStorage
         /// Get the items in this page
         /// </summary>
         /// <returns>A read-only collection of items</returns>
-        public IReadOnlyCollection<T> Items
+        public IQueryable<T> Items
         {
             get
             {
-                return this.page.ToList().AsReadOnly();
+                return this.page.AsQueryable();
             }
         }
     }
