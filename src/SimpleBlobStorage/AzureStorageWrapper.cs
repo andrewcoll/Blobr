@@ -40,7 +40,6 @@ namespace SimpleBlobStorage
             var cloudStorage = new CloudStorageAccount(storageCredentials, true);
             var blobClient = cloudStorage.CreateCloudBlobClient();
             this.container = blobClient.GetContainerReference(containerName);
-            this.container.CreateIfNotExistsAsync();
         }
 
 
@@ -54,6 +53,11 @@ namespace SimpleBlobStorage
             if(string.IsNullOrWhiteSpace(blobName))
             {
                 throw new ArgumentNullException(nameof(blobName));
+            }
+
+            if(!await this.container.ExistsAsync())
+            {
+                throw new InvalidOperationException($"Cannot retrieve '{blobName}' as specified container does not exist.");
             }
 
             var blob = this.container.GetBlobReference(blobName);
@@ -74,7 +78,7 @@ namespace SimpleBlobStorage
         /// </summary>
         /// <param name="blobName">Blob to save to</param>
         /// <param name="data">Data to save</param>
-        public async void SaveBlobDataAsync(string blobName, string data)
+        public async Task SaveBlobDataAsync(string blobName, string data)
         {
             if(string.IsNullOrWhiteSpace(blobName))
             {
@@ -85,6 +89,8 @@ namespace SimpleBlobStorage
             {
                 throw new ArgumentNullException(nameof(data));
             }
+
+            await this.container.CreateIfNotExistsAsync();
 
             var blob = this.container.GetBlockBlobReference(blobName);
             await blob.UploadTextAsync(data);

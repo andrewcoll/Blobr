@@ -60,7 +60,7 @@ namespace SimpleBlobStorage
         /// <returns></returns>
         private async Task<Page<T>> LoadPageAsync<T>(string pageName)
         {
-            var data = await Task.Run(() => this.storageWrapper.LoadBlobDataAsync(pageName));
+            var data = await this.storageWrapper.LoadBlobDataAsync(pageName);
             var deserializedData = JsonConvert.DeserializeObject<List<T>>(data);
 
             return Page<T>.FromJson<T>(deserializedData);
@@ -86,7 +86,7 @@ namespace SimpleBlobStorage
             }
 
             var serializedData = JsonConvert.SerializeObject(page.Items);
-            await Task.Run(() => this.storageWrapper.SaveBlobDataAsync(pageName, serializedData));
+            await this.storageWrapper.SaveBlobDataAsync(pageName, serializedData);
         }
     }
 }
