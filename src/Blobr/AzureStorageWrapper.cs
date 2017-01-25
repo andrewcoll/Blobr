@@ -91,9 +91,18 @@ namespace Blobr
             }
 
             await this.container.CreateIfNotExistsAsync();
-
             var blob = this.container.GetBlockBlobReference(blobName);
-            await blob.UploadTextAsync(data);
+
+            if(blob.Properties.LeaseState == LeaseState.Leased)
+            {
+                
+            }
+
+            var lease = await blob.AcquireLeaseAsync(TimeSpan.FromSeconds(10));
+            var accessCondition = AccessCondition.GenerateLeaseCondition(lease);
+            
+            await blob.UploadTextAsync(data, accessCondition, null, null);
+            await blob.ReleaseLeaseAsync(accessCondition);
         }
     }
 }
