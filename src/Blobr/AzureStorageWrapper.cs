@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
@@ -78,7 +79,7 @@ namespace Blobr
         /// </summary>
         /// <param name="blobName">Blob to save to</param>
         /// <param name="data">Data to save</param>
-        public async Task SaveBlobDataAsync(string blobName, string data)
+        public async Task SaveBlobDataAsync(string blobName, string data, int maxAttempts = 5, int retryInterval = 3000)
         {
             if(string.IsNullOrWhiteSpace(blobName))
             {
@@ -90,19 +91,38 @@ namespace Blobr
                 throw new ArgumentNullException(nameof(data));
             }
 
-            await this.container.CreateIfNotExistsAsync();
-            var blob = this.container.GetBlockBlobReference(blobName);
-
-            if(blob.Properties.LeaseState == LeaseState.Leased)
+            if(maxAttempts < 1)
             {
-                
+                throw new ArgumentException("maxAttempts must be at least 1.");
             }
 
-            var lease = await blob.AcquireLeaseAsync(TimeSpan.FromSeconds(10));
-            var accessCondition = AccessCondition.GenerateLeaseCondition(lease);
+            await this.container.CreateIfNotExistsAsync();
+            var blob = this.container.GetBlockBlobReference(blobName);
+            // TODO: check if exists
+
+            while(maxAttempts > 0)
+            {
+                if(blob.Properties.LeaseState == LeaseState.Leased)
+                {
+                    await Task.Delay(retryInterval);
+                    maxAttempts--;
+
+                    if(maxAttempts == 0)
+                    {
+                        throw new BlobrSaveException("Failed to acquire lease on blob and max attemps exceeded.");
+                    }
+
+                    continue;
+                }
+
+                // TODO: store lease for future renewal
+                var lease = await blob.AcquireLeaseAsync(TimeSpan.FromSeconds(5));
+                var accessCondition = AccessCondition.GenerateLeaseCondition(lease);
             
-            await blob.UploadTextAsync(data, accessCondition, null, null);
-            await blob.ReleaseLeaseAsync(accessCondition);
+                await blob.UploadTextAsync(data, accessCondition, null, null);
+                await blob.ReleaseLeaseAsync(accessCondition);
+                break;
+            }
         }
     }
 }
