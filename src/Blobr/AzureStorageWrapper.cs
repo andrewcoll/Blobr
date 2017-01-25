@@ -98,7 +98,6 @@ namespace Blobr
 
             await this.container.CreateIfNotExistsAsync();
             var blob = this.container.GetBlockBlobReference(blobName);
-            // TODO: check if exists
 
             while(maxAttempts > 0)
             {
@@ -118,7 +117,7 @@ namespace Blobr
                 // TODO: store lease for future renewal
                 var lease = await blob.AcquireLeaseAsync(TimeSpan.FromSeconds(5));
                 var accessCondition = AccessCondition.GenerateLeaseCondition(lease);
-            
+                
                 await blob.UploadTextAsync(data, accessCondition, null, null);
                 await blob.ReleaseLeaseAsync(accessCondition);
                 break;
