@@ -19,7 +19,7 @@ namespace Blobr.Tests
             return blobData[blobName];
         }
 
-        public Task SaveBlobDataAsync(string blobName, string data)
+        public Task SaveBlobDataAsync(string blobName, string data, int maxAttempts = 5, int retryInterval = 2000)
         {
             blobData.Add(blobName, data);
             return Task.FromResult(0);

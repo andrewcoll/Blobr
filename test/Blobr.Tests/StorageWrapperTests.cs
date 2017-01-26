@@ -27,7 +27,7 @@ namespace Blobr.Tests
             var items = new List<string>() { "a", "b", "c" };
             var wrapper = new StorageWrapper(new TestAzureStorageWrapper());
 
-            var page = wrapper.CreatePage<string>(items);
+            var page = wrapper.CreatePage<string>("testPage", items);
             Assert.Equal(3, page.Items.ToList().Count);
         }
 
@@ -37,8 +37,8 @@ namespace Blobr.Tests
             var storage = new TestAzureStorageWrapper();
             var items = new List<string>() { "a", "b", "c" };
             var wrapper = new StorageWrapper(storage);
-            var page = wrapper.CreatePage<string>(items);
-            await wrapper.SavePageAsync("test", page);
+            var page = wrapper.CreatePage<string>("testPage", items);
+            await wrapper.SavePageAsync(page);
             Assert.Equal(1, storage.blobData.Count);
         }
 
@@ -48,10 +48,10 @@ namespace Blobr.Tests
             var storage = new TestAzureStorageWrapper();
             var items = new List<string>() { "a", "b", "c" };
             var wrapper = new StorageWrapper(storage);
-            var page = wrapper.CreatePage<string>(items);
-            await wrapper.SavePageAsync("test", page);
+            var page = wrapper.CreatePage<string>("testPage", items);
+            await wrapper.SavePageAsync(page);
             
-            var retrieved = await wrapper.GetPageAsync<string>("test");
+            var retrieved = await wrapper.GetPageAsync<string>("testPage");
             Assert.Equal(3, retrieved.Items.ToList().Count);
         }
     }

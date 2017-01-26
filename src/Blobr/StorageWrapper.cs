@@ -25,14 +25,19 @@ namespace Blobr
         /// </summary>
         /// <param name="items">Items for the page</param>
         /// <returns>A page object</returns>
-        public Page<T> CreatePage<T>(ICollection<T> items)
+        public Page<T> CreatePage<T>(string pageName, ICollection<T> items)
         {
             if(items == null)
             {
                 throw new ArgumentNullException(nameof(items));
             }
 
-            var page = Page<T>.FromJson<T>(items);
+            if(string.IsNullOrWhiteSpace(pageName))
+            {
+                throw new ArgumentNullException(nameof(pageName));
+            }
+
+            var page = Page<T>.Create<T>(pageName, items);
             return page;
         }
 
@@ -60,10 +65,15 @@ namespace Blobr
         /// <returns></returns>
         private async Task<Page<T>> LoadPageAsync<T>(string pageName)
         {
+            if(string.IsNullOrWhiteSpace(pageName))
+            {
+                throw new ArgumentNullException(nameof(pageName));
+            }
+
             var data = await this.storageWrapper.LoadBlobDataAsync(pageName);
             var deserializedData = JsonConvert.DeserializeObject<List<T>>(data);
 
-            return Page<T>.FromJson<T>(deserializedData);
+            return Page<T>.Create<T>(pageName, deserializedData);
         }
 
 
@@ -73,20 +83,15 @@ namespace Blobr
         /// <param name="pageName">The name of the page</param>
         /// <param name="page">The page itself</param>
         /// <returns></returns>
-        public async Task SavePageAsync<T>(string pageName, Page<T> page)
+        public async Task SavePageAsync<T>(Page<T> page)
         {
-            if(string.IsNullOrWhiteSpace(pageName))
-            {
-                throw new ArgumentNullException(nameof(pageName));
-            }
-
             if(page == null)
             {
                 throw new ArgumentNullException(nameof(page));
             }
 
             var serializedData = JsonConvert.SerializeObject(page.Items);
-            await this.storageWrapper.SaveBlobDataAsync(pageName, serializedData);
+            await this.storageWrapper.SaveBlobDataAsync(page.Name, serializedData);
         }
     }
 }
