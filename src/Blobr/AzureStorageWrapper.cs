@@ -74,11 +74,15 @@ namespace Blobr
         }
 
         
+
         /// <summary>
         /// Save data to a blob
         /// </summary>
         /// <param name="blobName">Blob to save to</param>
         /// <param name="data">Data to save</param>
+        /// <param name="maxAttempts">Maximum number of attempts to save</param>
+        /// <param name="retryInterval">Interval between attemps in milliseconds</param>
+        /// <returns></returns>
         public async Task SaveBlobDataAsync(string blobName, string data, int maxAttempts = 5, int retryInterval = 3000)
         {
             if(string.IsNullOrWhiteSpace(blobName))
@@ -114,7 +118,6 @@ namespace Blobr
                     continue;
                 }
 
-                // TODO: store lease for future renewal
                 var lease = await blob.AcquireLeaseAsync(TimeSpan.FromSeconds(5));
                 var accessCondition = AccessCondition.GenerateLeaseCondition(lease);
                 
