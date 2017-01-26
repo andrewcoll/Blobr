@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Blobr.Validation;
 
 namespace Blobr
 {
@@ -10,7 +11,9 @@ namespace Blobr
 
         private readonly ICollection<T> page;
 
-        private Page(string pageName, ICollection<T> items) 
+        private readonly IEntityValidator<T> validator;
+
+        private Page(string pageName, ICollection<T> items, IEntityValidator<T> validator) 
         {
             if(items == null)
             {
@@ -19,6 +22,7 @@ namespace Blobr
 
             this.page = items;
             this.pageName = pageName;
+            this.validator = validator;
         }
 
         /// <summary>
@@ -26,7 +30,7 @@ namespace Blobr
         /// </summary>
         /// <param name="items">Items in the page</param>
         /// <returns>Page object</returns>
-        internal static Page<T> Create<T>(string pageName, ICollection<T> items)
+        internal static Page<T> Create<T>(string pageName, ICollection<T> items, IEntityValidator<T> validator = null)
         {
             if(items == null)
             {
@@ -38,7 +42,7 @@ namespace Blobr
                 throw new ArgumentNullException(nameof(pageName));
             }
 
-            var page = new Page<T>(pageName, items);
+            var page = new Page<T>(pageName, items, validator);
 
             return page;
         }
