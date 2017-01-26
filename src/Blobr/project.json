@@ -10,6 +10,10 @@
     "owners": [
       "Andrew Collins"
     ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/andrewcoll/Blobr.git"
+    },
     "licenseUrl": "https://github.com/andrewcoll/Blobr/blob/master/LICENSE",
     "summary": "A simple wrapper for storing data in Azure Blob Storage",
     "tags": [
