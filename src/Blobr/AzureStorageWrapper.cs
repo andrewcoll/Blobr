@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
@@ -58,10 +57,16 @@ namespace Blobr
 
             if(!await this.container.ExistsAsync())
             {
-                throw new InvalidOperationException($"Cannot retrieve '{blobName}' as specified container does not exist.");
+                throw new BlobrLoadException($"Cannot retrieve '{blobName}' as specified container does not exist.");
             }
 
             var blob = this.container.GetBlobReference(blobName);
+
+            if(!await blob.ExistsAsync())
+            {
+                throw new BlobrLoadException($"Cannot retried '{blobName}' as it does not exist.");
+            }
+            
             var data = string.Empty;
 
             using(var memStream = new MemoryStream())
